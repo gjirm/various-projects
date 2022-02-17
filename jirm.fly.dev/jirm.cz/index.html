@@ -3,9 +3,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Serif&family=Noto+Sans&family=Noto+Serif&display=swap" rel="stylesheet"> 
     <style>
 
         @font-face {
@@ -46,37 +43,53 @@
 
         body {
             font-family: "Noto Sans", sans-serif;
+            background-color: rgb(34, 36, 38);
+            color: rgb(220, 220, 220);
         }
 
         .my-p {
             margin-bottom: 5px;
         }
 
-        .my-pre {
+        pre {
             display: block;
-            background-color: rgb(240,240,240);
+            background-color: rgb(29, 31, 32);
+            border: 1px solid rgba(255, 255, 255, 0.24);;
+            border-left: 4px solid #ce9121;
             padding: 15px;
+            overflow-x:auto;
         }
 
         h1, h2, h3 {
             font-family: "Roboto Slab", serif;
+            letter-spacing: 1px;
         }
 
         code {
             font-family: "Cascadia Code", monospace;
-            font-size: 16px;
+            font-size: 14px;
+            color: #e9d7b5;
             -webkit-font-smoothing: antialiased;
-            color: rgb(100, 100, 100);
-        }
-
-        pre {
-            display: block;
-            background-color: rgb(240,240,240);
-            padding: 10px;
         }
 
         ul {
             margin-top: 5px;
+        }
+
+        a:link {
+            color: #38a2e4;
+        }
+        /* visited link */
+        a:visited {
+            color: #255fb6
+        }
+        /* mouse over link */
+        a:hover {
+            color: #ce9121;
+        }
+        /* selected link */
+        a:active {
+            color: #3a0874;
         }
 
     </style>
@@ -84,7 +97,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 >Jiří Matějíček</h1>
+        <h1 style="border-left: 6px solid #ce9121; padding-left: 10px;">Jiří Matějíček</h1>
         <p>
             I'm ever curious person working as IT admin. I'm interested in IT security, cryptography and privacy. Currently stationed at Safetica.
         </p>
@@ -97,11 +110,12 @@
             <li><a href="https://keybase.io/jirm">Keybase</a></li>
         </ul>
         <h2>Contact</h2>
-        <p>
-            Mail: <code>jirm&commat;</code><code>jirm.cz</code>
-        </p>
         <p class="my-p">
-            Securely (public keys):
+            My e-mail is:
+        </p>
+        <pre><code>jirm&commat;</code><code>jirm.cz</code></pre>
+        <p class="my-p">
+            You can contact me privately (public keys):
         </p>
         <ul>
             <li><a href="/age">age</a></li>

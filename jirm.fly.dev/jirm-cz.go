@@ -41,6 +41,8 @@ func jirmCZ(mux *http.ServeMux) {
 
 	// Miscellaneous redirects
 	for path, url := range map[string]string{
+		"/quickinstall":               "https://github.com/gjirm/various-projects/blob/main/quick_install.sh",
+		"/qi":                         "https://raw.githubusercontent.com/gjirm/various-projects/main/quick_install.sh",
 		"/pgp":                        "https://keybase.io/jirm/pgp_keys.asc",
 		"/dotfiles":                   "https://github.com/gjirm/dotfiles",
 		"/traefik-basic-auth-manager": "https://github.com/gjirm/gwc-server",

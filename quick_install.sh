@@ -1,6 +1,12 @@
 # Quick install cmds for some of the tools i use
 # for Linux & Windows
-# 
+# raw: https://jirm.cz/qi
+
+# Install Chocolatey
+iwr -useb https://go.jirm.cz/ch | iex
+
+# Install scoop package manager
+iwr -useb https://get.scoop.sh | iex
 
 # age (https://age-encryption.org)
 curl -s https://go.jirm.cz/i/age.sh | bash

@@ -42,7 +42,7 @@ func jirmCZ(mux *http.ServeMux) {
 	handleFuncWithCounter(mux, "jirm.cz/minisign",
 		func(rw http.ResponseWriter, _ *http.Request) {
 			rw.Header().Set("Content-Type", "text/plain")
-			rw.Write([]byte("untrusted comment: My minisign public key (https://jedisct1.github.io/minisign/). Verify: minisign -Vm <file> -P <(curl -fs https://jirm.cz/minisign)\n"))
+			rw.Write([]byte("untrusted comment: My minisign public key (https://jedisct1.github.io/minisign/). Verify: minisign -Vm <file> -P <public_key>\n"))
 			rw.Write([]byte("RWSp5bkunYko2ofULwBAD89mWHQtaj/99OK9SJgJMUk48m2PQTV8TjcZ\n"))
 		})
 

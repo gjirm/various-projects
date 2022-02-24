@@ -33,10 +33,17 @@ func jirmCZ(mux *http.ServeMux) {
 	handleFuncWithCounter(mux, "jirm.cz/age",
 		func(rw http.ResponseWriter, _ *http.Request) {
 			rw.Header().Set("Content-Type", "text/plain")
-			rw.Write([]byte("# My age (https://age-encryption.org/) public key\n"))
+			rw.Write([]byte("# My age public key (https://age-encryption.org/)\n"))
 			rw.Write([]byte("# Key ID is age-jirm-key-20220215\n"))
 			rw.Write([]byte("# age -e -a -R <(curl -fs https://jirm.cz/age)\n"))
 			rw.Write([]byte("age15xxxk0lz599yzhsf2qyvzgr69lm8ewtzws479qp89c9wp2gflugq2d92r6\n"))
+		})
+
+	handleFuncWithCounter(mux, "jirm.cz/minisign",
+		func(rw http.ResponseWriter, _ *http.Request) {
+			rw.Header().Set("Content-Type", "text/plain")
+			rw.Write([]byte("untrusted comment: My minisign public key (https://jedisct1.github.io/minisign/). Verify: minisign -Vm <file> -P <(curl -fs https://jirm.cz/minisign)\n"))
+			rw.Write([]byte("RWSp5bkunYko2ofULwBAD89mWHQtaj/99OK9SJgJMUk48m2PQTV8TjcZ\n"))
 		})
 
 	// Miscellaneous redirects

@@ -4,12 +4,16 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+
+	//"os"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
+
+//var logger *log.Logger
 
 func main() {
 	metricsMux := http.NewServeMux()
@@ -34,8 +38,7 @@ func main() {
 				http.Redirect(w, r, u.String(), http.StatusMovedPermanently)
 				return
 			}
-			//w.Header().Set("Strict-Transport-Security",
-			//	"max-age=63072000; includeSubDomains; preload")
+			//w.Header().Set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload")
 			w.Header().Set("Cache-Control", "public, max-age=300")
 			mux.ServeHTTP(w, r)
 		}),
@@ -62,6 +65,7 @@ func handleFuncWithCounter(mux *http.ServeMux, pattern string,
 	handle func(http.ResponseWriter, *http.Request)) {
 	mux.HandleFunc(pattern, func(rw http.ResponseWriter, r *http.Request) {
 		httpReqs.WithLabelValues(pattern).Inc()
+		//logger.Println(r.Method, r.URL.Path, r.RemoteAddr, r.UserAgent())
 		handle(rw, r)
 	})
 }

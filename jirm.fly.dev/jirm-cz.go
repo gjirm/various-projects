@@ -42,7 +42,7 @@ func jirmCZ(mux *http.ServeMux) {
 	handleFuncWithCounter(mux, "jirm.cz/minisign",
 		func(rw http.ResponseWriter, _ *http.Request) {
 			rw.Header().Set("Content-Type", "text/plain")
-			rw.Write([]byte("untrusted comment: My minisign public key (https://jedisct1.github.io/minisign/). Verify: minisign -Vm <file> -P <public_key>\n"))
+			rw.Write([]byte("untrusted comment: My minisign public key (https://jedisct1.github.io/minisign/). Verify: minisign -P $(curl -fs https://jirm.cz/minisign | tail -1) -Vm <file>\n"))
 			rw.Write([]byte("RWRN2/G3Qiz5ddELm0jk7hLVuCEzodFiDKZBQT3eJ2u/LsbNgNo5guh8\n"))
 		})
 
@@ -51,9 +51,9 @@ func jirmCZ(mux *http.ServeMux) {
 		"/quickinstall":               "https://github.com/gjirm/various-projects/blob/main/quick_install.sh",
 		"/qi":                         "https://raw.githubusercontent.com/gjirm/various-projects/main/quick_install.sh",
 		"/pgp":                        "https://keybase.io/jirm/pgp_keys.asc",
-		"/dotfiles":                   "https://github.com/gjirm/dotfiles",
-		"/traefik-basic-auth-manager": "https://github.com/gjirm/gwc-server",
-		"/gwc-server":                 "https://github.com/gjirm/gwc-server",
+		"/dotfiles":                   "https://github.com/gjirm/dotfiles.git",
+		"/traefik-basic-auth-manager": "https://github.com/gjirm/gwc-server.git",
+		"/gwc-server":                 "https://github.com/gjirm/gwc-server.git",
 	} {
 		path, url := path, url
 		mux.HandleFunc("jirm.cz"+path, func(rw http.ResponseWriter, r *http.Request) {

@@ -23,13 +23,16 @@ func jirmCZ(mux *http.ServeMux) {
 		http.Redirect(rw, r, u.String(), http.StatusMovedPermanently)
 	})
 
+	// content to main site
 	content, err := fs.Sub(jirmCzContent, "jirm.cz")
 	if err != nil {
 		log.Fatal(err)
 	}
-	// TODO: metrics counter for which files are loaded.
+
+	// main site
 	handleWithCounter(mux, "jirm.cz/", http.FileServer(http.FS(content)))
 
+	// age public key
 	handleFuncWithCounter(mux, "jirm.cz/age",
 		func(rw http.ResponseWriter, _ *http.Request) {
 			rw.Header().Set("Content-Type", "text/plain")
@@ -39,6 +42,7 @@ func jirmCZ(mux *http.ServeMux) {
 			rw.Write([]byte("age15xxxk0lz599yzhsf2qyvzgr69lm8ewtzws479qp89c9wp2gflugq2d92r6\n"))
 		})
 
+	// minisign public key
 	handleFuncWithCounter(mux, "jirm.cz/minisign",
 		func(rw http.ResponseWriter, _ *http.Request) {
 			rw.Header().Set("Content-Type", "text/plain")
@@ -46,14 +50,31 @@ func jirmCZ(mux *http.ServeMux) {
 			rw.Write([]byte("RWRN2/G3Qiz5ddELm0jk7hLVuCEzodFiDKZBQT3eJ2u/LsbNgNo5guh8\n"))
 		})
 
+	// git clone redirects
+	handleFuncWithCounter(mux, "jirm.cz/dotfiles/info/refs",
+		func(rw http.ResponseWriter, r *http.Request) {
+			url := "https://github.com/gjirm/dotfiles.git/info/refs?" + r.URL.RawQuery
+			http.Redirect(rw, r, url, http.StatusFound)
+		})
+
+	handleFuncWithCounter(mux, "jirm.cz/gwc-server/info/refs",
+		func(rw http.ResponseWriter, r *http.Request) {
+			url := "https://github.com/gjirm/gwc-server.git/info/refs?" + r.URL.RawQuery
+			http.Redirect(rw, r, url, http.StatusFound)
+		})
+
+	handleFuncWithCounter(mux, "jirm.cz/traefik-basic-auth-manager/info/refs",
+		func(rw http.ResponseWriter, r *http.Request) {
+			url := "https://github.com/gjirm/traefik-basic-auth-manager.git/info/refs?" + r.URL.RawQuery
+			http.Redirect(rw, r, url, http.StatusFound)
+		})
+
 	// Miscellaneous redirects
 	for path, url := range map[string]string{
-		"/quickinstall":               "https://github.com/gjirm/various-projects/blob/main/quick_install.sh",
-		"/qi":                         "https://raw.githubusercontent.com/gjirm/various-projects/main/quick_install.sh",
-		"/pgp":                        "https://keybase.io/jirm/pgp_keys.asc",
-		"/dotfiles":                   "https://github.com/gjirm/dotfiles.git",
-		"/traefik-basic-auth-manager": "https://github.com/gjirm/gwc-server.git",
-		"/gwc-server":                 "https://github.com/gjirm/gwc-server.git",
+		"/quickinstall": "https://github.com/gjirm/various-projects/blob/main/quick_install.sh",
+		"/qi":           "https://raw.githubusercontent.com/gjirm/various-projects/main/quick_install.sh",
+		"/pgp":          "https://keybase.io/jirm/pgp_keys.asc",
+		"/ssh":          "https://github.com/gjirm.keys",
 	} {
 		path, url := path, url
 		mux.HandleFunc("jirm.cz"+path, func(rw http.ResponseWriter, r *http.Request) {

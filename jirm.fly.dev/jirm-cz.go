@@ -77,6 +77,7 @@ func jirmCZ(mux *http.ServeMux) {
 		"/pgp":             "https://keybase.io/jirm/pgp_keys.asc",
 		"/ssh":             "https://github.com/gjirm.keys",
 		"/betlemskesvetlo": "https://www.facebook.com/events/s/betlemske-svetlo/1098149624223878/", // Betlemske svetlo 2022
+		"/bs":              "https://www.facebook.com/events/s/betlemske-svetlo/1098149624223878/", // Betlemske svetlo 2022 - shorter link
 	} {
 		path, url := path, url
 		mux.HandleFunc("jirm.cz"+path, func(rw http.ResponseWriter, r *http.Request) {

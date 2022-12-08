@@ -71,11 +71,12 @@ func jirmCZ(mux *http.ServeMux) {
 
 	// Miscellaneous redirects
 	for path, url := range map[string]string{
-		"/dotfiles":     "https://github.com/gjirm/dotfiles",
-		"/quickinstall": "https://github.com/gjirm/various-projects/blob/main/quick_install.sh",
-		"/qi":           "https://raw.githubusercontent.com/gjirm/various-projects/main/quick_install.sh",
-		"/pgp":          "https://keybase.io/jirm/pgp_keys.asc",
-		"/ssh":          "https://github.com/gjirm.keys",
+		"/dotfiles":        "https://github.com/gjirm/dotfiles",
+		"/quickinstall":    "https://github.com/gjirm/various-projects/blob/main/quick_install.sh",
+		"/qi":              "https://raw.githubusercontent.com/gjirm/various-projects/main/quick_install.sh",
+		"/pgp":             "https://keybase.io/jirm/pgp_keys.asc",
+		"/ssh":             "https://github.com/gjirm.keys",
+		"/betlemskesvetlo": "https://www.facebook.com/events/s/betlemske-svetlo/1098149624223878/", // Betlemske svetlo 2022
 	} {
 		path, url := path, url
 		mux.HandleFunc("jirm.cz"+path, func(rw http.ResponseWriter, r *http.Request) {

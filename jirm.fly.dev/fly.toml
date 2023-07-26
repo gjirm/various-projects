@@ -1,33 +1,22 @@
-# fly.toml file generated for jirm on 2022-02-17T12:13:43+01:00
+# fly.toml file generated for jirm-webwormhole on 2023-07-26T11:30:58+02:00
 
-app = "jirm"
-
-[metrics]
-  path = "/metrics"
-  port = 9091
+app = "jirm-webwormhole"
+kill_signal = "SIGINT"
+kill_timeout = 5
+mounts = []
+processes = []
 
 [[services]]
   internal_port = 8080
+  processes = ["app"]
   protocol = "tcp"
-
   [services.concurrency]
-    hard_limit = 100
-    soft_limit = 75
+    hard_limit = 25
+    soft_limit = 20
     type = "connections"
 
-  [[services.http_checks]]
-    grace_period = "1s"
-    interval = "10s"
-    method = "get"
-    path = "/"
-    protocol = "http"
-    restart_limit = 6
-    timeout = "2s"
-
-    [services.http_checks.headers]
-      Host = "jirm.cz"
-
   [[services.ports]]
+    force_https = true
     handlers = ["http"]
     port = 80
 

@@ -1,10 +1,36 @@
+
+#let name = "Document Name"
+
 #set text(
   font: "New Computer Modern",
   size: 10pt
 )
 #set page(
-  paper: "a6",
-  margin: (x: 1.8cm, y: 1.5cm),
+  paper: "a4",
+  margin: (x: 2.54cm, y: 2.54cm),
+  header: [
+    #set text(14pt)
+    #locate(
+        loc => if [#loc.page()] != [1] {
+            grid(
+              columns: (1fr, 1fr),
+              align(left)[
+              #image(
+                "safetica_icon_logo.svg",
+                height: 20pt
+                )
+              ],
+              align(right)[
+                #name
+              ]
+            )
+        }
+    )
+    
+    
+  ],
+  numbering: "1 / 1",
+  number-align: right
 )
 #set par(
   justify: true,
@@ -16,7 +42,7 @@
 )
 
 #set document(
-  title: "Glacier report",
+  title: name,
   author: "JirM",
   keywords:  ("glacier","climate"),
   date: auto
@@ -38,6 +64,8 @@ various factors that influence _fluid
 dynamics_ in glaciers and how they
 contribute to the formation and
 behaviour of these natural structures.
+
+#name
 
 + The climate
   - Temperature

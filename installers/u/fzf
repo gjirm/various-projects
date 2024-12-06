@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -euo pipefail
+
+LGREEN="\e[1;32m"
+LYELLOW="\e[1;33m"
+LBLUE="\e[1;34m"
+LRED="\e[1;31m"
+WHITE="\e[0m"
+
+
+app_exists () {
+  if [ -d $1 ]
+  then
+    echo -e "${LBLUE}--> $1 already exists. Updating...${WHITE}"
+    rm -rf $1
+  fi
+}
+
+echo -e "${LGREEN}--> Installing Fzf ...${WHITE}"
+
+app_exists "$HOME/.fzf"
+
+git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.fzf
+$HOME/.fzf/install --all --no-fish
+
+$HOME/.fzf/bin/fzf --version

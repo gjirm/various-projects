@@ -1,0 +1,145 @@
+#!/bin/bash
+
+set -euo pipefail
+
+LGREEN="\e[1;32m"
+LYELLOW="\e[1;33m"
+LBLUE="\e[1;34m"
+LRED="\e[1;31m"
+WHITE="\e[0m"
+
+if [ $EUID -ne 0 ]
+then
+   echo -e "${LYELLOW}--! This script needs to be run as root!${WHITE}" 
+   exit 1
+fi
+
+app_exists () {
+  if [ -f $1 ]
+  then
+    echo -e "${LBLUE}--> $1 already exists. Updating...${WHITE}"
+    rm -f $1
+  fi
+}
+
+install_check () {
+  if [ $2 -eq 0 ]
+  then
+    echo -e "${LGREEN}--> $1 installation successfully completed!${WHITE}"
+  else
+    echo -e "${LRED}--X $1 installation failed. Exiting!${WHITE}"
+    exit 1
+  fi
+}
+
+cmd_check () {
+  if [ $2 -ne 0 ]
+  then
+    echo -e "${LRED}--X $1 failed. Exiting!${WHITE}"
+    exit 1
+  fi
+}
+
+# Function to install unzip on Debian-based distributions
+install_unzip_debian() {
+    apt-get update
+    apt-get install -y unzip
+}
+
+# Function to install unzip on Red Hat-based distributions
+install_unzip_redhat() {
+    yum install -y unzip
+}
+
+# Function to install unzip on SUSE-based distributions
+install_unzip_suse() {
+    zypper install -y unzip
+}
+
+# Function to install unzip on Arch Linux
+install_unzip_arch() {
+    pacman -Syu --noconfirm unzip
+}
+
+# Function to install unzip on Alpine Linux
+install_unzip_alpine() {
+    apk add --no-cache unzip
+}
+
+# Function to install unzip on Fedora
+install_unzip_fedora() {
+    dnf install -y unzip
+}
+
+# Function to install unzip on FreeBSD
+install_unzip_freebsd() {
+    pkg install -y unzip
+}
+
+echo -e "${LGREEN}--> Installing Yazi ...${WHITE}"
+
+# Detect the Linux distribution
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    case "$ID" in
+        ubuntu|debian)
+            install_unzip_debian
+            ;;
+        centos|rhel)
+            install_unzip_redhat
+            ;;
+        fedora)
+            install_unzip_fedora
+            ;;
+        opensuse|suse)
+            install_unzip_suse
+            ;;
+        arch)
+            install_unzip_arch
+            ;;
+        alpine)
+            install_unzip_alpine
+            ;;
+        *)
+            echo "Unsupported Linux distribution: $ID"
+            exit 1
+            ;;
+    esac
+elif [ "$(uname)" = "FreeBSD" ]; then
+    install_unzip_freebsd
+else
+    echo "Cannot detect the Linux distribution."
+    exit 1
+fi
+
+arch=$(uname -m)
+
+app_exists "/usr/local/bin/yazi"
+app_exists "/usr/local/bin/ya"
+durl=$(curl -sL https://api.github.com/repos/sxyazi/yazi/releases/latest | grep "browser_download_url.*yazi-$arch-unknown-linux-musl.zip" | cut -d : -f 2,3 | tr -d \" | head -n 1)
+file=$(basename $durl)
+echo -e "${LGREEN}--> Downloading $file...${WHITE}"
+curl -sL $durl -o tmp.zip
+unzip -p tmp.zip yazi-$arch-unknown-linux-musl/yazi > ./tyazi
+unzip -p tmp.zip yazi-$arch-unknown-linux-musl/ya > ./tya
+rm tmp.zip
+cp ./tyazi /usr/local/bin/yazi
+chmod +x /usr/local/bin/yazi
+cp ./tya /usr/local/bin/ya
+chmod +x /usr/local/bin/ya
+cmd_check "Yazi download" $?
+rm tyazi
+rm tya
+echo "--------------"
+echo "Main config:"
+echo 'curl -sSL -o ~/.config/yazi/yazi.toml https://raw.githubusercontent.com/gjirm/dotfiles/master/linux/starship/.config/yazi/yazi.toml'
+echo "ln -s ~/.dotfiles/linux/starship/.config/yazi/yazi.toml ~/.config/yazi/yazi.toml"
+echo "--------------"
+echo "Update keymap:"
+echo 'curl -sSL -o ~/.config/yazi/keymap.toml https://raw.githubusercontent.com/gjirm/dotfiles/master/linux/starship/.config/yazi/keymap.toml'
+echo "ln -s ~/.dotfiles/linux/starship/.config/yazi/keymap.toml ~/.config/yazi/keymap.toml"
+echo "--------------"
+echo "Custom configs:"
+echo 'curl -sSL -o ~/.config/yazi/init.lua https://raw.githubusercontent.com/gjirm/dotfiles/master/linux/starship/.config/yazi/init.lua'
+echo "ln -s ~/.dotfiles/linux/starship/.config/yazi/init.lua ~/.config/yazi/init.lua"
+echo "--------------"

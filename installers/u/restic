@@ -1,0 +1,135 @@
+#!/bin/bash
+
+set -euo pipefail
+
+LGREEN="\e[1;32m"
+LYELLOW="\e[1;33m"
+LBLUE="\e[1;34m"
+LRED="\e[1;31m"
+WHITE="\e[0m"
+
+if [ $EUID -ne 0 ]
+then
+   echo -e "${LYELLOW}--! This script needs to be run as root!${WHITE}" 
+   exit 1
+fi
+
+app_exists () {
+  if [ -f $1 ]
+  then
+    echo -e "${LBLUE}--> $1 already exists. Updating...${WHITE}"
+    rm -f $1
+  fi
+}
+
+install_check () {
+  if [ $2 -eq 0 ]
+  then
+    echo -e "${LGREEN}--> $1 installation successfully completed!${WHITE}"
+  else
+    echo -e "${LRED}--X $1 installation failed. Exiting!${WHITE}"
+    exit 1
+  fi
+}
+
+cmd_check () {
+  if [ $2 -ne 0 ]
+  then
+    echo -e "${LRED}--X $1 failed. Exiting!${WHITE}"
+    exit 1
+  fi
+}
+# Function to install bzip2 on Debian-based distributions
+install_bzip2_debian() {
+    apt-get update
+    apt-get install -y bzip2
+}
+
+# Function to install bzip2 on Red Hat-based distributions
+install_bzip2_redhat() {
+    yum install -y bzip2
+}
+
+# Function to install bzip2 on SUSE-based distributions
+install_bzip2_suse() {
+    zypper install -y bzip2
+}
+
+# Function to install bzip2 on Arch Linux
+install_bzip2_arch() {
+    pacman -Syu --noconfirm bzip2
+}
+
+# Function to install bzip2 on Alpine Linux
+install_bzip2_alpine() {
+    apk add --no-cache bzip2
+}
+
+# Function to install bzip2 on Fedora
+install_bzip2_fedora() {
+    dnf install -y bzip2
+}
+
+# Function to install bzip2 on FreeBSD
+install_bzip2_freebsd() {
+    pkg install -y bzip2
+}
+
+echo -e "${LGREEN}--> Installing restic utility...${WHITE}"
+
+# Detect the Linux distribution
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    case "$ID" in
+        ubuntu|debian)
+            install_bzip2_debian
+            ;;
+        centos|rhel)
+            install_bzip2_redhat
+            ;;
+        fedora)
+            install_bzip2_fedora
+            ;;
+        opensuse|suse)
+            install_bzip2_suse
+            ;;
+        arch)
+            install_bzip2_arch
+            ;;
+        alpine)
+            install_bzip2_alpine
+            ;;
+        *)
+            echo "Unsupported Linux distribution: $ID"
+            exit 1
+            ;;
+    esac
+elif [ "$(uname)" = "FreeBSD" ]; then
+    install_bzip2_freebsd
+else
+    echo "Cannot detect the Linux distribution."
+    exit 1
+fi
+
+app_exists "/usr/local/bin/restic"
+arch=$(uname -m)
+if [[ "$arch" == "aarch64" ]]
+then
+  arch="arm64"
+elif [[ "$arch" == "x86_64" ]]
+then
+  arch="amd64"
+fi
+
+durl=$(curl -sL https://api.github.com/repos/restic/restic/releases | grep "browser_download_url.*linux_$arch.bz2" | cut -d : -f 2,3 | tr -d \" | head -n 1)
+file=$(basename $durl)
+echo -e "${LGREEN}--> Downloading $file...${WHITE}"
+curl -sL $durl | bzip2 -d > /usr/local/bin/restic
+cmd_check "restic download" $?
+chmod +x /usr/local/bin/restic
+/usr/local/bin/restic version
+install_check "restic" $?
+
+mkdir -p $HOME/.zsh_completions
+
+curl -sL https://raw.githubusercontent.com/restic/restic/refs/heads/master/doc/zsh-completion.zsh >> $HOME/.zsh_completions/_restic

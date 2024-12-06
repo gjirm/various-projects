@@ -1,0 +1,64 @@
+#!/bin/bash
+
+set -euo pipefail
+
+LGREEN="\e[1;32m"
+LYELLOW="\e[1;33m"
+LBLUE="\e[1;34m"
+LRED="\e[1;31m"
+WHITE="\e[0m"
+
+if [ $EUID -ne 0 ]
+then
+   echo -e "${LYELLOW}--! This script needs to be run as root!${WHITE}" 
+   exit 1
+fi
+
+app_exists () {
+  if [ -f $1 ]
+  then
+    echo -e "${LBLUE}--> $1 already exists. Updating...${WHITE}"
+    rm -f $1
+  fi
+}
+
+install_check () {
+  if [ $2 -eq 0 ]
+  then
+    echo -e "${LGREEN}--> $1 installation successfully completed!${WHITE}"
+  else
+    echo -e "${LRED}--X $1 installation failed. Exiting!${WHITE}"
+    exit 1
+  fi
+}
+
+cmd_check () {
+  if [ $2 -ne 0 ]
+  then
+    echo -e "${LRED}--X $1 failed. Exiting!${WHITE}"
+    exit 1
+  fi
+}
+
+echo -e "${LGREEN}--> Installing Fd...${WHITE}"
+
+app_exists "/usr/local/bin/fd"
+
+arch=$(uname -m)
+
+durl=$(curl -sL https://api.github.com/repos/sharkdp/fd/releases/latest | grep "browser_download_url.*$arch-unknown-linux-musl.tar.gz" | cut -d : -f 2,3 | tr -d \" | head -n 1)
+file=$(basename $durl)
+echo -e "${LGREEN}--> Downloading $file...${WHITE}"
+curl -sL $durl | tar -xzf - --strip-components=1 -C /usr/local/bin --wildcards "*/fd"
+
+cmd_check "Fd download" $?
+
+chmod +x /usr/local/bin/fd
+chown root:root /usr/local/bin/fd
+
+/usr/local/bin/fd --version
+install_check "Fd" $?
+
+mkdir -p $HOME/.zsh_completions
+
+curl -sL https://raw.githubusercontent.com/sharkdp/fd/refs/heads/master/contrib/completion/_fd >> $HOME/.zsh_completions/_fd

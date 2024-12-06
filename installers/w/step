@@ -1,0 +1,6 @@
+Set-ExecutionPolicy RemoteSigned -scope CurrentUser
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+scoop install git
+scoop bucket add smallstep https://github.com/smallstep/scoop-bucket.git
+scoop install smallstep/step

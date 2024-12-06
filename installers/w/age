@@ -1,0 +1,6 @@
+Set-ExecutionPolicy RemoteSigned -scope CurrentUser
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+scoop bucket add extras
+scoop install git
+scoop install age

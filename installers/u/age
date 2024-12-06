@@ -1,0 +1,72 @@
+#!/bin/bash
+
+set -euo pipefail
+
+LGREEN="\e[1;32m"
+LYELLOW="\e[1;33m"
+LBLUE="\e[1;34m"
+LRED="\e[1;31m"
+WHITE="\e[0m"
+
+if [ $EUID -ne 0 ]
+then
+   echo -e "${LYELLOW}--! This script needs to be run as root!${WHITE}" 
+   exit 1
+fi
+
+app_exists () {
+  if [ -f $1 ]
+  then
+    echo -e "${LBLUE}--> $1 already exists. Updating...${WHITE}"
+    rm -f $1
+  fi
+}
+
+install_check () {
+  if [ $2 -eq 0 ]
+  then
+    echo -e "${LGREEN}--> $1 installation successfully completed!${WHITE}"
+  else
+    echo -e "${LRED}--X $1 installation failed. Exiting!${WHITE}"
+    exit 1
+  fi
+}
+
+cmd_check () {
+  if [ $2 -ne 0 ]
+  then
+    echo -e "${LRED}--X $1 failed. Exiting!${WHITE}"
+    exit 1
+  fi
+}
+
+# Age
+echo -e "${LGREEN}--> Installing age encryption...${WHITE}"
+
+app_exists "/usr/local/bin/age"
+app_exists "/usr/local/bin/age-keygen"
+
+arch=$(uname -m)
+
+if [[ "$arch" == "aarch64" ]]
+then
+  arch="arm64"
+elif [[ "$arch" == "x86_64" ]]
+then
+  arch="amd64"
+fi
+
+durl=$(curl -sL https://api.github.com/repos/FiloSottile/age/releases/latest | grep "browser_download_url.*linux-$arch.tar.gz" | cut -d : -f 2,3 | tr -d \" | head -n 1)
+file=$(basename $durl)
+echo -e "${LGREEN}--> Downloading $file...${WHITE}"
+curl -sL $durl | tar -xzf - --strip-components=1 -C /usr/local/bin --wildcards "*/age*"
+
+cmd_check "Age download" $?
+
+chmod +x /usr/local/bin/age
+chown root:root /usr/local/bin/age
+chmod +x /usr/local/bin/age-keygen
+chown root:root /usr/local/bin/age-keygen
+
+/usr/local/bin/age -version
+install_check "Age" $?

@@ -17,7 +17,67 @@ app_exists () {
   fi
 }
 
+install_check () {
+  if [ $2 -eq 0 ]
+  then
+    echo -e "${LGREEN}--> $1 installation successfully completed!${WHITE}"
+  else
+    echo -e "${LRED}--X $1 installation failed. Exiting!${WHITE}"
+    exit 1
+  fi
+}
+
+cmd_check () {
+  if [ $2 -ne 0 ]
+  then
+    echo -e "${LRED}--X $1 failed. Exiting!${WHITE}"
+    exit 1
+  fi
+}
+
 echo -e "${LGREEN}--> Installing Fzf ...${WHITE}"
+
+app_exists "/usr/local/bin/fzf"
+
+arch=$(uname -m)
+if [[ "$arch" == "aarch64" ]]
+then
+  arch="arm64"
+elif [[ "$arch" == "x86_64" ]]
+then
+  arch="amd64"
+fi
+
+durl=$(curl -sL https://api.github.com/repos/junegunn/fzf/releases/latest | grep "browser_download_url.*linux_$arch.tar.gz" | cut -d : -f 2,3 | tr -d \" | head -n 1)
+file=$(basename $durl)
+echo -e "${LGREEN}--> Downloading $file...${WHITE}"
+curl -sL $durl | tar -xzf - -C /usr/local/bin
+
+cmd_check "fzf download" $?
+
+chmod +x /usr/local/bin/fzf
+chown root:root /usr/local/bin/fzf
+
+/usr/local/bin/fzf --version
+install_check "fzf" $?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app_exists "$HOME/.fzf"
 

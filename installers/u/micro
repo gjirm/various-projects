@@ -10,9 +10,8 @@ WHITE="\e[0m"
 
 if [ $EUID -ne 0 ]
 then
-  echo -e "${LYELLOW}--! This script needs to be run as root! Trying install with sudo ...${WHITE}"
-  sudo bash "$0" "$@"
-  exit
+  echo -e "${LYELLOW}--! This script needs to be run as root! Trying install with sudo...${WHITE}"
+  exec sudo "$0" "$@"
 fi
 
 app_exists () {
@@ -53,7 +52,7 @@ then
   arch="linux64"
 fi
 
-durl=$(curl -s https://api.github.com/repos/zyedidia/micro/releases | grep -v "nightly" | grep "browser_download_url.*$arch.tar.gz" | cut -d : -f 2,3 | tr -d \" | head -n 1)
+durl=$(curl -s https://api.github.com/repos/zyedidia/micro/releases | grep -v "nightly" | grep "browser_download_url.*$arch-static.tar.gz" | cut -d : -f 2,3 | tr -d \" | head -n 1)
 file=$(basename $durl)
 echo -e "${LGREEN}--> Downloading $file...${WHITE}"
 curl -sL $durl | tar -xzf - --strip-components=1 -C /usr/local/bin/ --wildcards "*/micro"

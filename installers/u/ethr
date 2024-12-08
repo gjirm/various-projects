@@ -8,8 +8,8 @@ WHITE="\e[0m"
 
 if [ $EUID -ne 0 ]
 then
-   echo -e "${LYELLOW}--! This script needs to be run as root!${WHITE}" 
-   exit 1
+  echo -e "${LYELLOW}--! This script needs to be run as root! Trying install with sudo...${WHITE}"
+  exec sudo "$0" "$@"
 fi
 
 app_exists () {

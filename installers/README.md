@@ -3,7 +3,7 @@
 Build:
 
 ```shell
-docker built -t myubuntu .
+docker build -t myubuntu .
 ```
 
 Run:

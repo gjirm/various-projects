@@ -1,0 +1,63 @@
+#!/bin/bash
+
+set -euo pipefail
+
+LGREEN="\e[1;32m"
+LYELLOW="\e[1;33m"
+LBLUE="\e[1;34m"
+LRED="\e[1;31m"
+WHITE="\e[0m"
+
+if [ $EUID -ne 0 ]
+then
+  echo -e "${LYELLOW}--! This script needs to be run as root! Trying install with sudo...${WHITE}"
+  exec sudo "$0" "$@"
+fi
+
+app_exists () {
+  if [ -f $1 ]
+  then
+    echo -e "${LBLUE}--> $1 already exists. Updating...${WHITE}"
+    rm -f $1
+  fi
+}
+
+install_check () {
+  if [ $2 -eq 0 ]
+  then
+    echo -e "${LGREEN}--> $1 installation successfully completed!${WHITE}"
+  else
+    echo -e "${LRED}--X $1 installation failed. Exiting!${WHITE}"
+    exit 1
+  fi
+}
+
+cmd_check () {
+  if [ $2 -ne 0 ]
+  then
+    echo -e "${LRED}--X $1 failed. Exiting!${WHITE}"
+    exit 1
+  fi
+}
+
+# eget
+echo -e "${LGREEN}--> Installing eget...${WHITE}"
+app_exists "/usr/local/bin/eget"
+arch=$(uname -m)
+if [[ "$arch" == "aarch64" ]]
+then
+  arch="arm64"
+elif [[ "$arch" == "x86_64" ]]
+then
+  arch="amd64"
+fi
+
+durl=$(curl -s https://api.github.com/repos/zyedidia/eget/releases | grep -v "nightly" | grep "browser_download_url.*linux_$arch.tar.gz" | cut -d : -f 2,3 | tr -d \" | head -n 1)
+file=$(basename $durl)
+echo -e "${LGREEN}--> Downloading $file...${WHITE}"
+curl -sL $durl | tar -xzf - --strip-components=1 -C /usr/local/bin/ --wildcards "*/eget"
+cmd_check "eget download" $?
+
+chmod +x /usr/local/bin/eget
+/usr/local/bin/eget --version
+install_check "eget" $?

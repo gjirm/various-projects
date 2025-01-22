@@ -120,6 +120,7 @@ durl=$(curl -sL https://api.github.com/repos/sxyazi/yazi/releases/latest | grep 
 file=$(basename $durl)
 echo -e "${LGREEN}--> Downloading $file...${WHITE}"
 curl -sL $durl -o tmp.zip
+cmd_check "Yazi download" $?
 unzip -p tmp.zip yazi-$arch-unknown-linux-musl/yazi > ./tyazi
 unzip -p tmp.zip yazi-$arch-unknown-linux-musl/ya > ./tya
 rm tmp.zip
@@ -127,9 +128,12 @@ cp ./tyazi /usr/local/bin/yazi
 chmod +x /usr/local/bin/yazi
 cp ./tya /usr/local/bin/ya
 chmod +x /usr/local/bin/ya
-cmd_check "Yazi download" $?
+/usr/local/bin/ya pack -a yazi-rs/plugins:full-border
 rm tyazi
 rm tya
+echo "--------------"
+echo "Install full-border plugin:"
+echo "ya pack -a yazi-rs/plugins:full-border"
 echo "--------------"
 echo "Main config:"
 echo 'curl -sSL -o ~/.config/yazi/yazi.toml https://raw.githubusercontent.com/gjirm/dotfiles/master/linux/starship/.config/yazi/yazi.toml'

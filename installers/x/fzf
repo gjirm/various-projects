@@ -10,7 +10,7 @@ WHITE="\e[0m"
 
 
 app_exists () {
-  if [ -d $1 ]
+  if [ -f $1 ]
   then
     echo -e "${LBLUE}--> $1 already exists. Updating...${WHITE}"
     rm -rf $1
@@ -57,3 +57,9 @@ chmod +x /usr/local/bin/fzf
 
 /usr/local/bin/fzf --version
 install_check "fzf" $?
+
+echo "--------------"
+echo "Set up fzf key bindings and fuzzy completion, add to .bashrc or .zshrc:"
+echo 'eval "$(fzf --bash)"'
+echo 'eval "$(fzf --zsh)"'
+echo "--------------"

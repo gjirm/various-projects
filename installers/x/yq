@@ -68,6 +68,8 @@ chown root:root /usr/local/bin/yq
 /usr/local/bin/yq --version
 install_check "yq" $?
 
-mkdir -p $HOME/.zsh_completions
-
-/usr/local/bin/yq shell-completion zsh > $HOME/.zsh_completions/_yq
+echo "--------------"
+echo "Set up yq completion, add to .bashrc or .zshrc:"
+echo 'source <(yq shell-completion bash)'
+echo 'source <(yq shell-completion zsh)'
+echo "--------------"

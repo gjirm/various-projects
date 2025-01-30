@@ -61,5 +61,5 @@ install_check "fzf" $?
 echo "--------------"
 echo "Set up fzf key bindings and fuzzy completion, add to .bashrc or .zshrc:"
 echo 'eval "$(fzf --bash)"'
-echo 'eval "$(fzf --zsh)"'
+echo 'source <(fzf --zsh)'
 echo "--------------"

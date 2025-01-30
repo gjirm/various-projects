@@ -81,7 +81,7 @@ echo -e "${LGREEN}--> Installing restic utility...${WHITE}"
 if [ -f /etc/os-release ]; then
     . /etc/os-release
     case "$ID" in
-        ubuntu|debian)
+        ubuntu|debian|pop)
             install_bzip2_debian
             ;;
         centos|rhel)

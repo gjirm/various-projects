@@ -46,7 +46,7 @@ echo -e "${LGREEN}--> Installing Restic Docker script wrapper...${WHITE}"
 app_exists $resticScript
 
 echo -e "${LGREEN}--> Downloading restic-docker...${WHITE}"
-curl -sL https://raw.githubusercontent.com/gjirm/various-projects/refs/heads/main/installers/scripts/restic-docker.sh > $resticScript
+curl -fsSL https://raw.githubusercontent.com/gjirm/various-projects/refs/heads/main/installers/scripts/restic-docker.sh > $resticScript
 
 chmod +x $resticScript
 

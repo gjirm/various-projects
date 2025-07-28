@@ -46,7 +46,7 @@ echo -e "${LGREEN}--> Installing Restic Docker Volumes backup/restore script...$
 app_exists $resticScript
 
 echo -e "${LGREEN}--> Downloading restic-docker-volumes...${WHITE}"
-curl -sL https://raw.githubusercontent.com/gjirm/various-projects/refs/heads/main/installers/scripts/restic-docker-volumes.sh > $resticScript
+curl -fsSL https://raw.githubusercontent.com/gjirm/various-projects/refs/heads/main/installers/scripts/restic-docker-volumes.sh > $resticScript
 
 chmod +x $resticScript
 

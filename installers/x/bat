@@ -56,5 +56,5 @@ cmd_check "Bat download" $?
 chmod +x /usr/local/bin/bat
 chown root:root /usr/local/bin/bat
 
-/usr/local/bin/fd --version
+/usr/local/bin/bat --version
 install_check "Bat" $?

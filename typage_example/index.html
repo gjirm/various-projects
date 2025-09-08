@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Age Decryption App</title>
+  <script src="age-0.2.5.min.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    textarea, input { width: 100%; margin-bottom: 1em; }
+    button { padding: 0.5em 1em; }
+    #output { white-space: pre-wrap; background: #f0f0f0; padding: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Decrypt with Age</h1>
+  <label for="password">Password:</label>
+  <input type="password" id="password" placeholder="Enter password">
+
+  <label for="encrypted">Encrypted Data:</label>
+  <textarea id="encrypted" rows="10" placeholder="Paste age-encrypted data here..."></textarea>
+
+  <button onclick="decrypt()">Decrypt</button>
+
+  <h2>Decrypted Output:</h2>
+  <div id="output"></div>
+
+  <script>
+    async function decrypt() {
+      const password = document.getElementById('password').value;
+      const encrypted = document.getElementById('encrypted').value;
+      const output = document.getElementById('output');
+      output.textContent = 'Decrypting...';
+      await new Promise(resolve => setTimeout(resolve, 10));
+      try {
+        const decoder = new age.Decrypter();
+        decoder.addPassphrase(password);
+
+        // Decode armored input
+        const armored = age.armor.decode(encrypted);
+
+        // Decrypt as text
+        const decrypted = await decoder.decrypt(armored, 'text');
+
+        output.textContent = decrypted;
+      } catch (err) {
+        output.textContent = '❌ Decryption failed. Please check your password and encrypted data format.\n\nDetails: ' + err.message;
+
+      }
+    }
+  </script>
+</body>
+</html>

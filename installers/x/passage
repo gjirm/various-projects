@@ -1,0 +1,55 @@
+#!/bin/bash
+
+set -euo pipefail
+
+LGREEN="\e[1;32m"
+LYELLOW="\e[1;33m"
+LBLUE="\e[1;34m"
+LRED="\e[1;31m"
+WHITE="\e[0m"
+
+if [ $EUID -eq 0 ]
+then
+  echo -e "${LYELLOW}--! This script needs to be run as user! Exiting...${WHITE}"
+fi
+
+app_exists () {
+  if [ -f $1 ]
+  then
+    echo -e "${LBLUE}--> $1 already exists. Updating...${WHITE}"
+    rm -f $1
+  fi
+}
+
+install_check () {
+  if [ $2 -eq 0 ]
+  then
+    echo -e "${LGREEN}--> $1 installation successfully completed!${WHITE}"
+  else
+    echo -e "${LRED}--X $1 installation failed. Exiting!${WHITE}"
+    exit 1
+  fi
+}
+
+cmd_check () {
+  if [ $2 -ne 0 ]
+  then
+    echo -e "${LRED}--X $1 failed. Exiting!${WHITE}"
+    exit 1
+  fi
+}
+
+# Age
+echo -e "${LGREEN}--> Installing passage...${WHITE}"
+
+git clone https://github.com/FiloSottile/passage.git /tmp/passage
+
+cd /tmp/passage
+
+sudo make install
+
+rm -rf /tmp/passage
+
+mkdir -p $HOME/.passage/store
+
+echo -e "${LGREEN}--> Done! See: https://github.com/FiloSottile/passage ${WHITE}"

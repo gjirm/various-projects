@@ -45,15 +45,18 @@ echo -e "${LGREEN}--> Installing age encryption...${WHITE}"
 
 app_exists "/usr/local/bin/age"
 app_exists "/usr/local/bin/age-keygen"
+app_exists "/usr/local/bin/age-plugin-yubikey"
 
 arch=$(uname -m)
 
 if [[ "$arch" == "aarch64" ]]
 then
   arch="arm64"
+  parch="arm64"
 elif [[ "$arch" == "x86_64" ]]
 then
   arch="amd64"
+  parch="x86_64"
 fi
 
 durl=$(curl -sL https://api.github.com/repos/FiloSottile/age/releases/latest | grep "browser_download_url.*linux-$arch.tar.gz" | cut -d : -f 2,3 | tr -d \" | head -n 1)
@@ -70,3 +73,15 @@ chown root:root /usr/local/bin/age-keygen
 
 /usr/local/bin/age -version
 install_check "Age" $?
+
+durl=$(curl -sL https://api.github.com/repos/str4d/age-plugin-yubikey/releases/latest | grep "browser_download_url.*$parch-linux.tar.gz" | cut -d : -f 2,3 | tr -d \" | head -n 1)
+file=$(basename $durl)
+echo -e "${LGREEN}--> Downloading $file...${WHITE}"
+curl -sL $durl | tar -xzf - --strip-components=1 -C /usr/local/bin
+chmod +x /usr/local/bin/age-plugin-yubikey
+chown root:root /usr/local/bin/age-plugin-yubikey
+
+/usr/local/bin/age-plugin-yubikey --version
+install_check "age-plugin-yubikey" $?
+
+echo -e "${LGREEN}--> You may need to install pcsd service: apt-get install pcscd ${WHITE}"

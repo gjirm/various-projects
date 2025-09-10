@@ -125,5 +125,35 @@ function InstallFromGithub {
 
 Write-Host "--> Installing age-plugin-yubikey..." -ForegroundColor Green
 InstallFromGithub -repo "str4d/age-plugin-yubikey" -filenamePattern "age-plugin-yubikey*x86_64-windows.zip" -installPath "."
+
+$installPath = "C:\Program Files\age-plugin-yubikey"
+
+if (Test-Path "$installPath") {
+    if ($deleteExistingPath) {
+        Write-Host "--> Deleting existing install path: $installPath" -ForegroundColor Yellow
+        Remove-Item -Path $installPath -Recurse -Force -ErrorAction SilentlyContinue
+    }    
+} else {
+    Write-Host "--> Install path does not exists - creating: $installPath" -ForegroundColor Yellow
+    New-Item -Path $installPath -ItemType "directory" -Force | Out-Null
+}
+
+Copy-Item -Path ".\age-plugin-yubikey\age-plugin-yubikey.exe" -Destination "$installPath\age-plugin-yubikey.exe"
+Copy-Item -Path ".\age-plugin-yubikey\age-plugin-yubikey.exe" -Destination "$installPath\age-plugin-yubikey"
+Remove-Item -Path ".\age-plugin-yubikey" -Recurse
+
+$oldUserPath = [Environment]::GetEnvironmentVariable('path', 'user');
+if (-NOT ($oldUserPath -like "*$installPath*")) {
+    Write-Host "--> Setting executable to user PATH variable..." -ForegroundColor Green
+    $newUserPath = $oldUserPath  + ';' + $installPath
+    [Environment]::SetEnvironmentVariable('path', $newUserPath,'user');
+}
+$oldMachinePath = [Environment]::GetEnvironmentVariable('path', 'machine');
+if (-NOT ($oldUserPath -like "*$installPath*")) {
+    Write-Host "--> Setting executable to computer PATH variable..." -ForegroundColor Green
+    $newMachinePath = $oldMachinePath + ';' + $installPath
+    [Environment]::SetEnvironmentVariable('path', $newMachinePath,'machine');
+}
+
 Write-Host "--> Done <--" -ForegroundColor Green
 Read-Host -Prompt "Press Enter to exit" 

@@ -53,5 +53,5 @@ curl -sL $durl | tar -xzf - -C /usr/local/bin
 cmd_check "oxker download" $?
 chmod +x /usr/local/bin/oxker
 chown root:root /usr/local/bin/oxker
-/usr/local/bin/oxker -v
+/usr/local/bin/oxker --version
 install_check "oxker" $?

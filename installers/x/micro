@@ -52,7 +52,7 @@ then
   arch="linux64"
 fi
 
-durl=$(curl -s https://api.github.com/repos/zyedidia/micro/releases | grep -v "nightly" | grep "browser_download_url.*$arch-static.tar.gz" | cut -d : -f 2,3 | tr -d \" | head -n 1)
+durl=$(curl -s https://api.github.com/repos/micro-editor/micro/releases | grep -v "nightly" | grep "browser_download_url.*$arch-static.tar.gz" | cut -d : -f 2,3 | tr -d \" | head -n 1)
 file=$(basename $durl)
 echo -e "${LGREEN}--> Downloading $file...${WHITE}"
 curl -sL $durl | tar -xzf - --strip-components=1 -C /usr/local/bin/ --wildcards "*/micro"

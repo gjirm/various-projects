@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -euo pipefail
+
+LGREEN="\e[1;32m"
+LYELLOW="\e[1;33m"
+LBLUE="\e[1;34m"
+LRED="\e[1;31m"
+WHITE="\e[0m"
+
+echo -e "${LGREEN}--> Installing dtop ...${WHITE}"
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/amir20/dtop/releases/latest/download/dtop-installer.sh | sh
+
+
+
